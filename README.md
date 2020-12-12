@@ -1,0 +1,2 @@
+# webapp_shift_management
+ウェブアプリの研修で作成したシフト管理アプリケーションです。
