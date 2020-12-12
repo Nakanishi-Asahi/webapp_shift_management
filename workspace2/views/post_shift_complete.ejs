@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      シフト投稿完了
+    </title>
+  </head>
+  <body>
+    新しいシフトを受け付けました
+    <p>
+      <button type="button" onclick="location.href=window.location.origin+'/my_page'">
+	<% if(admin_flag===1){ %> 
+	  管理者ページヘ
+	<% } else{ %>
+	  マイページへ
+	<% } %>
+      </button>
+    </p>
+  </body>
+</html>

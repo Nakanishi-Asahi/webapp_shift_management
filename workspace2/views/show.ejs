@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      マイページ
+    </title>
+  </head>
+  <body>
+    <!-- コードから渡されたデータを表示-->
+    <p>
+      <%- message %>
+    </p>
+    <p>
+      <button type="button" onclick="location.href=window.location.origin+'/my_page'">
+	<% if(admin_flag===1){ %>
+	   管理者ページヘ
+	<% } else{ %>
+	   マイページへ
+	<% } %>
+      </button>	
+    </p>
+  </body>
+</html>

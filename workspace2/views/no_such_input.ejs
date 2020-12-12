@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>
+      ヒット無し  
+    </title>
+  </head>
+  <body>
+    ヒットするレコードがありませんでした。
+    <p>
+      <button type="button" onclick="location.href=window.location.origin+'/my_page'">
+        <% if(admin_flag===1){ %>
+	  管理者ページヘ
+	<% } else{ %>
+	  マイページへ
+	<% } %>
+      </button>
+    </p>
+  </body>
+</html>

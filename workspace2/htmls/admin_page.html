@@ -1,0 +1,106 @@
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      管理者用マイページ
+    </title>
+    <script language="JavaScript">
+      function chk1(){
+      if(document.form2.cb1.checked){
+      document.getElementById("time1").value="";
+      document.getElementById("time1").readOnly=true;
+      }
+      else{
+      document.getElementById("time1").readOnly=false;
+      }
+      }
+      function chk2(){
+      if(document.form2.cb2.checked){
+      document.getElementById("time2").value="";
+      document.getElementById("time2").readOnly=true;
+      }
+      else{
+      document.getElementById("time2").readOnly=false;
+      }
+      }
+    </script>
+  </head>
+  <body onload="onload();">
+    <div id="edit_area">
+    </div>
+    <p>
+      <button type="button" onclick="location.href='https://nakanishiasahi.mydns.jp/user_management'">
+	ユーザ管理を行う
+      </button>
+    </p>
+    <p>
+      <button type="button" onclick="location.href='http://localhost:5000/show_all'">
+	すべてのシフト入力を見る
+      </button>
+    </p>
+    <p>
+      <button type="button" onclick="location.href='http://localhost:5000/sort_show'">
+	日付順にすべてのシフトを見る
+      </button>
+    </p>
+    <p>
+      <form name="form1" action="http://localhost:5000/date_show" method="post">
+	<input type="submit" value="日付ごとにシフトを見る">
+	<label>
+	<input type="checkbox" name="cb_date" value="on">
+	1週間後までのシフトを見る
+      </label>
+      </form>
+    </p>
+    <p>
+      <button type="button" onclick="location.href='http://localhost:5000/employee_show'">
+	従業員ごとのシフト日程を見る
+      </button>
+    </p>
+    <div style="padding: 10px; margin-bottom: 10px; border: 5px double #333333;">
+      <form name="form2" action="http://localhost:5000/post_shift" method="post">
+	<label>
+	  年月日
+	  <input type="date" name="date1" required>
+	</label>
+	<p>
+	  <label>
+	    出社時刻
+	    <input type="time" name="in_time" id="time1">
+	  </label>
+	  <label>
+	    <input type="checkbox" name="cb1" value="on" onclick="chk1()">
+	    出社時刻を指定しない
+	  </label>
+	</p>
+	<p>
+	  <label>
+	    退社時刻
+	    <input type="time" name="out_time" id="time2">
+	  </label>
+	  <label>
+	    <input type="checkbox" name="cb2" value="on" onclick="chk2()">
+	    退社時刻を指定しない
+	  </label>
+	</p>
+	<label>
+	  コメント
+	  <input type="text" name="comment">
+	</label>
+	<input type="submit" value="シフトの新規提出、修正の方はこちら">
+      </form>
+    </div>
+    <div style="padding: 10px; margin-bottom: 10px; border: 5px double #333333;">
+      <form name="form1" action="http://localhost:5000/delete_shift" method="post">
+	<label>
+	  年月日
+	  <input type="date" name="date2" required>
+	</label>
+	<input type="submit" value="シフトの削除の方はこちら">
+      </form>
+    </div>
+    <button type="button" onclick="location.href='http://localhost:5000/logout'">
+      ログアウト
+    </button>
+  </body>
+</html>
