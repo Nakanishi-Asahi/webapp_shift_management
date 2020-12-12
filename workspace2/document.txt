@@ -1,0 +1,70 @@
+最終目標
+nodejs、nginx、mysqlを組み合わせてブラウザ上で動くシフト管理アプリケーションを作る。
+
+
+
+まずは最新のnodejsをインストールしましょう。
+
+普通にnodejsとnpmをインストールします。
+
+$ sudo apt install -y nodejs npm
+
+n packageを導入します。
+
+$ sudo npm install n -g
+
+n packageを使ってnodeをインストールします。
+
+$ sudo n stable
+
+最初に入れた古いnodejsとnpmは消してしまいましょう。
+
+$ sudo apt purge -y nodejs npm
+$ exec $SHELL -l
+
+ここまでで最新版のインストールは完了です。
+最新バージョンになっているかどうか確認してみましょう。
+
+$ node -v
+
+12月12日時点ではv14.15.1が最新版みたいです。
+
+
+
+それではnodejsを使って簡単な応答をしてみましょう。
+
+まずはワークスペースを作り、そこへ移動します。
+
+$ mkdir workspace
+$ cd workspace
+
+ここでnodejsのファイルを実行するのに必要なモジュールをインストールします。
+
+$ npm init
+
+途中でいろいろ出てきますが何も入力せずEnterキーで飛ばしてよいです。
+終わったらディレクトリがどうなったのかを見ましょう。
+
+$ ls
+
+lsコマンドのあと、package.jsonがディレクトリ内に存在していれば成功です。
+package.json
+
+
+それではディレクトリ内に次のようなhello_world.jsを作ってください。
+
+###hello_world.js####################################################
+const express=require('express');
+const app=express();
+app.get("/",(req,res)=>{
+        res.send("Hello world!");
+    }
+);
+app.listen(3000,()=>console.log("Listening on port 3000"));
+#####################################################################
+
+jsファイルは次のようなコマンドで実行することができます。
+
+$ node hello_world.js
+
+
