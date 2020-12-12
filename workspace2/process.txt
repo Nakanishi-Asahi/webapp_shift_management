@@ -81,4 +81,9 @@ https://qiita.com/digdagdag/items/08a950a94fd4c45acc77
 nginxで443はhttpsアクセス、80はhttpでアクセスした場合にhttpsへとリダイレクトするように変更した。
 
 最後にすべてをsakuraサーバでできるようにすべてを移した。
+mysqlとかはいちいちデータベースやテーブルを作りなおすのが面倒なのでmysqldumpを利用した。
+
+mysqldumpのやり方
+https://qiita.com/PlanetMeron/items/3a41e14607a65bc9b60c
+
 ドメインとサーバをdeployするのをお忘れなく。
