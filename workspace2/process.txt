@@ -1,0 +1,84 @@
+nodejsのインストール
+https://qiita.com/seibe/items/36cef7df85fe2cefa3ea
+
+まずはnodejsを使ってhttp://locahost:5000/helloにアクセスしたらhello worldが表示させる簡単なものを作った。
+次にres.sendFileを使ってhtmlファイルを送信するようにした（ここでhtmlの文法を学んだ）。
+この時点でテキストファイルにシフトを追記していくアプリが完成した。
+
+次にシフトをテキストファイルではなく、mysqlによるデータベースを利用して管理するように変更する。
+
+mysqlのインストール
+https://qiita.com/houtarou/items/a44ce783d09201fc28f5
+
+nodejsとmysqlの接続
+https://qiita.com/PianoScoreJP/items/7ed172cd0e7846641e13
+
+ここでmysqlを利用したシフト管理アプリは一応完成。
+文字にすると一瞬だけどめっちゃ苦労した。
+
+次にmysqlに絵文字を使えるように文字コードをutf8mb4に変更した。
+いわゆる寿司ビール問題が発生するため設定には気を使った。
+
+mysqlの文字コードをutf8mb4にする。
+https://qiita.com/suzuki_sh/items/f02fc88a8514fd23a47e
+
+ここまででアプリをいじるのは一旦ストップ。
+
+次にvps（Virtual Private Server）と自分のドメインを取得した。
+vpsにはSakuraのvpsを、ドメインにはmydns.jpを利用した（本来ならばドメイン取得にはお名前.comを利用するらしい）。
+
+さくらのVPS
+https://vps.sakura.ad.jp/
+
+mydns.jp
+https://www.mydns.jp/
+
+VPSにはubuntu18-serverを入れた。
+sshを使って手元の端末からサーバにアクセスできるようにしておこう。
+
+sshのセットアップ
+https://qiita.com/mukoya/items/f20def019e25dc162ca8
+
+次にufwを使ってサーバのport22、80、443を開けた。
+
+ufwを用いたポート開放方法
+https://qiita.com/siida36/items/be21d361cf80d664859c
+
+次にnginxを使ってサーバを立ててみる。
+
+nginxのインストール
+https://サーバー構築と設定.com/?p=3100
+
+configでhello.htmlを送るようにした。
+それができたらreverse proxyの設定をした。
+
+nginxをreverse proxyとして使う設定方法
+https://qiita.com/schwarz471/items/9b44adfbec006eab60b0
+
+サーバ証明書を取得する。
+certbotを利用してLet's encryptのワイルドカード証明書を取得すると無料だった。
+本来ならばsakuraからJPRSドメイン認証型というようにするはずだった。
+
+certbotのインストール
+https://qiita.com/yuzgit/items/b3948fcd19d425adb272
+
+certbitを利用したLet's encryptのワイルドカード証明書取得
+https://qiita.com/digitarhythm/items/8e0036dbf5299087a2a2
+https://qiita.com/kiwi-bird/items/45e72484d440262eadbd
+
+そしてsslの安全性テストを行った。
+
+sslの安全性テストはこちらから行った。
+https://www.ssllabs.com/ssltest/
+
+すると評価はBだったこれをA+まであげたい。
+次のサイトを参考に評価を上げた。
+
+ssl testの評価を上げる
+https://ngzm.hateblo.jp/entry/2018/03/07/201848
+https://qiita.com/digdagdag/items/08a950a94fd4c45acc77
+
+nginxで443はhttpsアクセス、80はhttpでアクセスした場合にhttpsへとリダイレクトするように変更した。
+
+最後にすべてをsakuraサーバでできるようにすべてを移した。
+ドメインとサーバをdeployするのをお忘れなく。
