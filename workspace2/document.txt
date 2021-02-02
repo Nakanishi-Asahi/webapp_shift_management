@@ -41,7 +41,7 @@ create database db0;
 quit
 
 db0を今回のアプリにあったものに設定する
-mysqldump -u mysql -p db0<dump.txt
+mysql -u mysql -p db0<mysqldump.txt
 mysqlmysql
 use db0;
 select * from shift_users;
@@ -70,6 +70,8 @@ nginxの動作確認
 sudo systemctl enable nginx
 sudo systemctl status nginx
 activeになっていたらOK
+activeになっていなかったら
+sudo systemctl start nginx
 一応、http://localhost:80/にアクセスする
 Welcome to NginxとなっていたらOK
 
