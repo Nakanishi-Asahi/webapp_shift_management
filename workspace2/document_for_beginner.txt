@@ -1,0 +1,572 @@
+最終目標
+nodejs、nginx、mysqlを組み合わせてブラウザ上で動くシフト管理アプリケーションを作る。
+
+
+
+まずは最新のnodejsをインストールしましょう。
+
+普通にnodejsとnpmをインストールします。
+
+$ sudo apt install -y nodejs npm
+
+n packageを導入します。
+
+$ sudo npm install n -g
+
+n packageを使ってnodeをインストールします。
+
+$ sudo n stable
+
+最初に入れた古いnodejsとnpmは消してしまいましょう。
+
+$ sudo apt purge -y nodejs npm
+$ exec $SHELL -l
+
+ここまでで最新版のインストールは完了です。
+最新バージョンになっているかどうか確認してみましょう。
+
+$ node -v
+
+2020年12月12日時点ではv14.15.1が最新版みたいです。
+
+
+
+それではnodejsを使って簡単な応答をしてみましょう。
+
+まずはワークスペースを作り、そこへ移動します。
+
+$ mkdir workspace
+$ cd workspace
+
+ここでnodejsのファイルを実行するのに必要なモジュールをインストールします。
+
+$ npm init
+
+途中でいろいろ出てきますが何も入力せずEnterキーで飛ばしてよいです。
+終わったらディレクトリがどうなったのかを見ましょう。
+
+$ ls
+
+lsコマンドのあと、package.jsonがディレクトリ内に存在していれば成功です。
+package.jsonはパッケージを追加するために必要な情報が設定されているファイルです。
+これが存在することにより様々な便利な機能を利用することができます。
+
+それでは手始めにExpressをインストールしてみます。
+コマンドラインで次のコマンドを売ってください。
+
+$ npm insatll express --save
+
+インストールが完了したらワークスペースがどのようになったかを見てみましょう。
+
+$ ls
+
+node_modulesというディレクトリとpackage-lock.jsonというファイルが存在していればうまくインストールできています。
+ここまでくれば、あと少しです。
+
+それではディレクトリ内に次のようなhello_world.jsを作ってください。
+
+###hello_world.js####################################################
+const express=require("express");
+const app=express();
+app.get("/",(req,res)=>{
+        res.send("Hello world!");
+    }
+);
+app.listen(3000,()=>console.log("Listening on port 3000"));
+#####################################################################
+
+jsファイルは次のようなコマンドで実行することができます。
+
+$ node hello_world.js
+
+コンソールに「Listening on port 3000」という出力が出てきたでしょうか。
+ブラウザでうまくできているかを確認しましょう。
+ブラウザを開いて「http://localhost:3000/」にアクセスしてみてください。
+「Hello world!」と表示されていれば完璧です。
+
+ではhello_world.jsのソースコードについて解説していきます。
+1行目の「const express=require("express")」と2行目の「const app=express()」では使用するモジュール（今回はexpressモジュール）を読み込んで使える状態にしています（難しい言葉で言えばインスタンスを生成して変数appに代入しています）。
+3行目から6行目までの文ではappのメソッドgetを用いています。
+getメソッドではルートパス（http://localhost:3000/）にアクセスされた時の処理を行います。
+その次の(req,res)のreqはリクエストの略で、クライアント側が行うあれこれを、resはレスポンスの略で、サーバ側が行うあれこれを表します。
+res.send("Hello world!");ではサーバ側がクライアント側へ「Hello World!」という文字列を送っています。
+7行目の文ではこのアプリケーションは3000ポートにアクセスした場合に動作しますという意味です。
+他のポート番号ではこのアプリケーションは動きません。
+
+ここまで理解することができたでしょうか。
+これでnodejsを利用したサーバとクライアントの簡単な応答は完成です。
+
+
+
+nodejsのres.sendを使って簡単な文字列をサーバ側からクライアント側に送ることができるようになった次はもう少しこったものを送ってみましょう。
+今回はhtmlファイルを送ってみます。
+
+htmlファイルとはウェブページを組み立てることができるファイルです。
+
+では早速作っていきましょう。
+まずはhtmlファイルをまとめて入れるディレクトリを作ります。
+
+$ mkdir html
+$ cd html
+
+htmlファイルはこのhtmlというディレクトリにまとめるようにしましょう。
+
+それでは次のようなtest.htmlを作ってください。
+
+###test.html##########################################
+<html>
+<head>
+<meta charset="utf-8">
+</meta>
+<title>
+テストだよ
+</title>
+</head>
+<body>
+<p>
+htmlのテストです。
+</p>
+<p>
+テキストの入力が行えます。
+<input type="text">
+</p>
+<p>
+<button type="button">
+ボタンだよ
+</button>
+</p>
+</body>
+</html>
+######################################################
+
+書き終わりましたら、ワークスペースへ戻ってください。
+
+$ cd ..
+
+では作ったhtmlファイルを送るようにhello_world.jsを変更していきましょう。
+
+res.send("Hello world!");を次のように書き換えてください。
+
+###hello_world.js#####################################
+res.sendFile(__dirname+"/html/test.html");
+######################################################
+
+sendFileはファイルを送るメソッドです。
+今回はtest.htmlを送っています。
+__dirnameはこのファイルが存在する場所（パス）を表します。
+
+それでは実際に動かすとどのようになるのかを見ていきましょう。
+
+$ node hello_world.js
+
+ブラウザからhttp://localhost:3000/にアクセスします。
+
+うまくできているでしょうか。
+テキスト入力欄やボタンが見えれば、うまく出来ています。
+なんとなくそれらしくなってきましたね。
+
+それではhtmlファイルの解説をします。
+
+htmlファイルは基本的に入れこの構造になっています。
+test.htmlを見ると<html>で始まり</html>で終わっているのがわかるかと思います。
+htmlにおける様々なものはタグにより表現されています。
+タグは「<」と「>」で囲まれており、タグの始まりは「<html>」、タグの終わりは「</html>」というようになります。
+タグは入れ子構造になっており、タグの中にタグが、そのタグの中にも更にタグが...という風になっているのです。
+
+今回登場したタグについてそれぞれ説明していきましょう。
+
+まずhtmlタグはhtmlファイルの始まりと終わりを表すタグです。
+実際、一番最初と一番最後にhtmlタグが付いているのがわかります。
+
+headタグはヘッダ情報を指定するタグです。
+ヘッダ情報とはそのページの作者や使用されている文字コードなど基本的にユーザには見えない部分の情報です。
+例外としてタイトル（今回のtest.htmlで言う「テストだよ」）はブラウザのサイトのタブの部分にて見ることができます。
+今回のファイルにはヘッダ情報として使用する文字コードとタイトルを含めました。
+
+metaタグはhtml文書の文字コードやキーワードなどをブラウザに伝えるタグです。
+今回は文字コードをutf-8にするということをブラウザに伝えています。
+
+タイトルはtitleタグで指定することができます。
+前述したとおり、タイトルはブラウザのタブの部分にて見ることができます。
+
+さて面倒になってきましたね。
+ヘッダ情報の指定するためのタグは一旦おしまい、次は本文に登場したタグです。
+
+まずはbodyタグです。
+これは本文の開始と終了を表すタグです。
+基本的にこの中にあるものがページ上に表示されます。
+
+次にpタグです。
+pはparagraphの略で段落を表すタグです。
+ページを見ると「htmlのテストです。」とテキスト入力欄は同じ行には存在せず、段落が違うのが見て取れます。
+
+inputタグはユーザが入力することができる欄です。
+inputには様々なタイプが存在します。
+今回は「type="text"」で入力形式をテキストに設定しています。
+他にも「type="date"」で日付をカレンダーのようなGUIで入力するようにするなど様々なタイプがあるので、調べてみてください。
+
+buttonタグはボタンのタグです。
+特に言うことはありません。
+
+以上がbodyで使われているタグの説明です。
+htmlには今紹介したもの以外にも様々なタグが存在します。
+自分が作りたいページに合わせて調べてみてください。
+
+以上でサーバ側からクライアント側へhtmlファイルを送る場合についての解説を終わります。
+
+
+
+次はようやくシフト管理のアプリケーションを作る準備をしていきます。
+
+まずはアプリケーションをどのような設計にするかを考えてみましょう。
+今回想定する動作は以下のようにします。
+1、まずログイン画面でログインを行う。
+2、ログインが成功するとマイページへ飛ばされる。
+3、マイページでは入力されたシフトのデータを見ることができ、また新しくシフトの入力、削除、訂正を行うことができる。
+4、用が済んだらログアウトする。
+ありがちなやつですね。
+
+このアプリケーションでは様々な人がシフトの入力を行います。
+それらの管理はどのように行えば良いのでしょうか。
+今回はmysqlというデータベースを使っていこうと思います。
+
+データベースとは大量のデータを表（データベースの世界ではテーブルと言います）形式で保存するものです。
+個人で利用することができる無料のデータベースはPostgreSQLやMariaDBなどがありますが、今回はMySQLを使用します。
+MySQLはOracle社が提供している、世界で最も使用されているデータベースシステムです。
+高速かつ操作が簡単で、複数のOSで動かすことができます。
+
+それではUbuntuにMySQLをインストールしていきましょう。
+
+$ sudo apt install mysql-server mysql-client
+
+ちゃんとインストールできているか確認します。
+
+$ mysql --version
+
+ちゃんとインストールされたらバージョンが出力されるはずです。
+
+それではrootユーザの設定を行いましょう。
+
+$ sudo mysql_secure_installation
+
+すると対話的にrootの設定やmysqlの初期化を行えます。
+
+まずはrootユーザのパスワードを設定します。
+適当なパスワードを決めてください。
+忘れないように。
+
+###端末##########################################################
+Securing the MySQL server deployment.
+
+Enter password for user root:
+###############################################################
+
+ここでパスワードの入力を行います。
+
+###############################################################
+The 'validate_password' plugin is installed on the server.
+The subsequent steps will run with the existing configuration
+of the plugin.
+Using existing password for root.
+
+Estimated strength of the password: 50 
+Change the password for root ? ((Press y|Y for Yes, any other key for No) : no
+################################################################
+
+パスワードの強さが出力され、変更するかどうかを聞かれます。
+今回は変更しません。
+noを入力しましょう。
+
+################################################################
+ ... skipping.
+By default, a MySQL installation has an anonymous user,
+allowing anyone to log into MySQL without having to have
+a user account created for them. This is intended only for
+testing, and to make the installation go a bit smoother.
+You should remove them before moving into a production
+environment.
+
+Remove anonymous users? (Press y|Y for Yes, any other key for No) : y
+################################################################
+
+MySQLでははじめから仮のユーザが登録されています。
+邪魔なので削除してしまいましょう。
+yを入力します。
+
+##################################################################
+Success.
+
+
+Normally, root should only be allowed to connect from
+'localhost'. This ensures that someone cannot guess at
+the root password from the network.
+
+Disallow root login remotely? (Press y|Y for Yes, any other key for No) : y
+##################################################################
+
+rootユーザがリモートでログインすることができるようにするか決めます。
+今回は必要ないのでyを入力してください。
+
+##################################################################
+Success.
+
+By default, MySQL comes with a database named 'test' that
+anyone can access. This is also intended only for testing,
+and should be removed before moving into a production
+environment.
+
+
+Remove test database and access to it? (Press y|Y for Yes, any other key for No) : y
+##################################################################
+
+MySQLにはインストールした際に仮のデータベースが入っています。
+それを除去するかどうか決めます。
+必要ないのでyを入力しましょう。
+
+##################################################################
+ - Dropping test database...
+Success.
+
+ - Removing privileges on test database...
+Success.
+
+Reloading the privilege tables will ensure that all changes
+made so far will take effect immediately.
+
+Reload privilege tables now? (Press y|Y for Yes, any other key for No) : y
+##################################################################
+
+上記の設定を即時反映させるかどうかを聞かれます。
+yを入力します。
+
+####################################################################
+Success.
+
+All done! 
+####################################################################
+
+上のように出力されれば完了です。
+
+それではMySQLにログインしてみます。
+
+$ sudo mysql -u root -p
+
+パスワードが要求されるので先ほど設定したものを入力してください。
+
+###################################################################
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 4
+Server version: 5.7.32-0ubuntu0.16.04.1 (Ubuntu)
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> 
+###################################################################
+
+するとmysqlにログインができたかと思います。
+
+今はrootユーザでmysqlにログインしていますが、これではrootユーザに問題が発生した場合、不便です。
+他のユーザを作り、そのユーザを使って様々な操作を行っていきましょう。
+
+それではmysqlユーザの追加を行っていきます。
+今回はユーザ名を「mysql@localhost」、パスワードを「mysqlmysql」として登録してみます。
+もちろん、ユーザ名、パスワードはお好きなものにしていただいて結構です。
+
+mysql> create user 'mysql'@'localhost' identified by 'mysqlmysql';
+
+うまく行けば「Query OK」と表示が出るはずです。
+一応ユーザが新たに追加されているかどうか確認しましょう。
+
+mysql> select user,host from mysql.user;
+
+これでユーザ一覧が見られます。
+先ほど追加した「mysql@localhost」があれば、追加されているということです。
+
+次に新たに追加したユーザにすべての権限を付与します。
+
+mysql> grant all on *.* to 'mysql'@'localhost';
+
+「*.*」はすべてのデータベース、テーブルの権限という意味です。
+ちゃんと権限が付与できているかどうかを確認しましょう。
+
+mysql> show grants for 'mysql'@'localhost';
+
+以上で新たにユーザを登録し、それにすべての権限を与える工程が終了です。
+以降はこのユーザを使って、いろいろとデータベースの操作をしていきます。
+
+それでは一旦mysqlから抜けましょう。
+
+mysql> quit
+
+そして今度は先ほど作った新しいユーザでmysqlにログインします。
+
+$ mysql -u mysql -p
+
+2つ目のmysqlは新しく作ったユーザ名です。
+先ほど作ったユーザ名が「mysql」ではない人は気をつけてください。
+
+ログインできたでしょうか。
+それではいよいよシフト管理アプリケーションに使うデータベースを作っていく…前に、少しだけデータベースの色々について勉強しなくてはいけません。
+
+データベースが何かということは少し前に書きました。
+たくさんのデータを保存しておくものです。
+データはデータベースの中のテーブルというものの中に保存されているんでした。
+
+さて、テーブルは具体的にどのようになっているのでしょうか。
+例としてソーシャルゲーム（パズドラやモンスト）のモンスターをデータベースに保存する場合を考えてみましょう。
+ゲームのモンスターたちには様々な情報が含まれています。
+モンスターの個別ナンバー、名前、攻撃力、体力、属性、技…挙げだしたらきりがありません。
+もちろんそれらの値はモンスター毎に異なります。
+例えば次のように。
+No.1、名前:レッドドラゴン、攻撃力:50、体力:60、属性:炎、技:火炎放射
+No.2、名前:アイスモンキー、攻撃力:80、体力:20、属性:水、技:タコ殴り
+No.3、名前:リーフスネーク、攻撃力:40、体力:10、属性:草、技:締め付け
+
+もうテーブルがどういうものかわかったのではないでしょうか。
+テーブルはまさしくデータの各属性の値を表の如く保存しているのです。
+データベースの世界では各属性のことをスキーマやフィールド、カラムと呼んだりします。
+
+それでは今回のシフト管理アプリにはどのようなカラムを持ったテーブルが必要なのかを考えていきましょう。
+
+まず必要なのはこのアプリを使うユーザのあれこれを保存するテーブルです。
+このテーブルは誰かが今回のアプリにログインした時に使われます。
+会員ナンバー、氏名、メールアドレス、パスワードなどがカラムとなりそうです。
+
+それでは実際にこのテーブルをMySQL内で作ってみましょう。
+
+今MySQLに先ほど作ったユーザでログインしていると思います（そうではない場合はログインしてください）。
+まずはテーブルが属するデータベース自体を作っていきます。
+次の文を実行してください。
+
+mysql> create database shift_app;
+
+これで「shift_app」という名前のデータベースが作られました。
+
+それではこの中にテーブルを作っていきます。
+
+まずはどのデータベースを使用するか選びます。
+
+mysql> use shift_app;
+
+次にこれから作るテーブルのカラムの型について考えます。
+今回作るテーブルはアプリを使用するユーザの情報を保存するものですが、そのカラムはひとまず会員ナンバー、氏名、メールアドレス、パスワードの4つにしようと思います（後々にカラムを増やしたり変更したりします）。
+会員ナンバーは数字を入れます。
+会員が増えていくたびに、1,2,3…と増えていくのが良いかと思われます。
+氏名、メールアドレス、パスワードには文字列が適しているでしょう。
+
+では、これに従ってテーブルを作っていきます。
+次のようにしてください。
+
+mysql> create table shift_users(id int(11),name varchar(30),email varchar(200),password varchar(1000));
+
+create table文ではまず作るテーブル名を書き、括弧の中にカラムをカラム名、型の順で書き連ねていきます。
+id（会員ナンバー）がint型の整数で、他のカラムがvarcharという型になっているのが解ると思います。
+varcharとは可変文字列型です。
+varcharの後ろの数字は最大文字数です。
+例えば「varchar(30)」なら最大30文字格納することができる文字列型という風になります。
+31文字以上の文字列をそのカラムに入れてしまうと最大文字数をオーバーしてしまい、途中で切れてしまった文字列がカラムに保存されてしまいます。
+
+実際にテーブルが作られたかどうかを確認しましょう。
+
+mysql> show tables;
+
+shift_app内にあるテーブル一覧が見られます。
+その中にshift_usersというテーブルがあるならテーブルができています。
+カラムも想定の通りになっているかどうか確認しましょう。
+
+mysql> show columns from shift_users;
+
+FieldとTypeが想定通りになっているでしょうか。
+なっていれば大成功です。
+
+では実際にユーザのデータをこのテーブルに挿入してみましょう。
+データの挿入はinsert文を用いて行います。
+
+mysql> insert into shift_users(id,name,email,password) values(1,'Tanaka Tarou','tanaka@gmail.com','tanatana');
+
+挿入されたかどうかを確認します。
+
+mysql> select * from shift_users;
+
+*は任意の文字列を指す記号です。
+よって上のselect文は「shift_usersのテーブルから全部のデータを選んで見せて」という命令です。
+先ほど挿入したデータがちゃんとテーブルに保存されていることが確認できましたか？
+
+これにてひとまずこのテーブルは完成です…とはなりません。
+もっとこのテーブルのあれこれを色々と設定することができます。
+
+まずは特定のカラムにnot null制約というものをかけてみます。
+今回のアプリの想定ではメールアドレスとパスワードを用いて、本人かどうかの認証を行い、ログインします。
+つまり、名前とメールアドレスとパスワードのカラムは空欄なってはなりません。
+絶対にユーザの全員のデータが名前とメールアドレスとパスワードの値を保持している必要があります。
+この「このカラムは空欄になってはいけません」という制約のことを「not null制約」と言います。
+この制約はテーブルを作る際にカラムごとにつけることもできるのですが、今回はテーブルを作った後からnot null制約を付与してみたいと思います。
+
+それでは次の文を実行してください。
+
+mysql> alter table shift_users modify id int(11) not null;
+
+mysql> alter table shift_users modify name varchar(30) not null;
+
+mysql> alter table shift_users modify email varchar(200) not null;
+
+mysql> alter table shift_users modify password varchar(1000) not null;
+
+これでnot null制約を各カラムに付与できたかと思います。
+show columns文で確認してみましょう。
+
+mysql> show columns from shift_users;
+
+Nullの欄がYESだったのがNOになったはずです。
+試しにemailがnullのデータを入れてみましょうか。
+
+mysql> insert into shift_users(id,name,password) values(2,'Suzuki Hanako','suzusuzu');
+
+エラーが出て挿入できなかったと思います。
+これがnot null制約の力です。
+
+もうnot null制約以外にもう1ついじります。
+idにauto_incrementを設定します。
+auto_incrementとはデータが入るたびに自動で1ずつ増えていく数字を入れてくれる機能です。
+それではやってみましょう。
+
+mysql> alter table shift_users modify id int(11) auto_increment not null primary key;
+
+これでidカラムにauto_incrementが設定できました。
+primary keyとは各レコードに1つずつ割り当てられる固有の値という意味です。
+レコードが違うならばprimary keyのカラムの値も違います。
+確認してみましょう。
+
+mysql> show columns from shift_users;
+
+右側のExtraの欄に記載があるはずです。
+またKeyの欄にもPRIと書かれています。
+
+実際に機能しているかのテストをしてみましょう。
+まずは今までにテーブルに入れてきたデータを消します。
+
+mysql> truncate table shift_users;
+
+そして次のようなレコードを入れてみましょう。
+
+mysql> insert into shift_users(name,email,password) values('Tanaka Tarou','tanaka@gmail.com','tanatana');
+
+mysql> insert into shift_users(name,email,password) values('Suzuki Hanako','suzuki@gmail.com','suzusuzu');
+
+mysql> insert into shift_users(name,email,password) values('Maeda Kenta','maeda@gmail.com','maemae');
+
+ではそれぞれ見てみましょう。
+
+mysql> select * from shift_users;
+
+idが勝手に1,2,3と埋まっているのがわかります。
+これがauto_incrementです。
+うまく行ったでしょうか。
+
+
